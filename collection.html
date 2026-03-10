@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KORE — Collection I</title>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,300;0,6..96,400;1,6..96,300;1,6..96,400&family=Syne:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void:#08080A; --deep:#0F0F12; --surface:#161618;
+  --cream:#F0EDE6; --dim:#8A8780; --brass:#BFA378;
+  --border:rgba(240,237,230,.08);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Syne',sans-serif;background:var(--void);color:var(--cream);overflow-x:hidden;cursor:none;}
+
+.grain{position:fixed;inset:0;pointer-events:none;z-index:9990;opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:256px 256px;}
+
+.cursor{position:fixed;width:12px;height:12px;background:var(--cream);border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:difference;transition:width .3s,height .3s;}
+.cursor.expanded{width:60px;height:60px;}
+
+/* NAV */
+nav{position:fixed;top:0;width:100%;padding:1.5rem 2.5rem;display:flex;justify-content:space-between;align-items:center;z-index:800;}
+nav::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(8,8,10,.7) 0%,transparent 100%);pointer-events:none;z-index:-1;}
+.nav-logo{font-family:'Bodoni Moda',serif;font-size:1.1rem;letter-spacing:.4em;text-decoration:none;color:var(--cream);}
+.nav-menu-btn{display:flex;flex-direction:column;gap:5px;cursor:none;padding:.5rem;}
+.nav-menu-btn span{display:block;width:28px;height:1px;background:var(--cream);transition:transform .4s ease,opacity .3s ease;}
+.nav-menu-btn.active span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+.nav-menu-btn.active span:nth-child(2){opacity:0;}
+.nav-menu-btn.active span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+
+/* MENU */
+.menu-screen{position:fixed;inset:0;z-index:700;background:var(--void);display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;clip-path:inset(0 0 100% 0);transition:clip-path .7s cubic-bezier(.76,0,.24,1);}
+.menu-screen.open{clip-path:inset(0 0 0% 0);}
+.menu-nav-list{list-style:none;}
+.menu-nav-item{overflow:hidden;border-bottom:1px solid var(--border);}
+.menu-nav-item:first-child{border-top:1px solid var(--border);}
+.menu-nav-link{display:flex;align-items:baseline;justify-content:space-between;padding:2rem 0;text-decoration:none;color:var(--cream);font-family:'Bodoni Moda',serif;font-size:clamp(3rem,8vw,7rem);font-weight:300;line-height:1;transform:translateY(110%);transition:transform .6s cubic-bezier(.76,0,.24,1),color .3s;}
+.menu-screen.open .menu-nav-link{transform:translateY(0);}
+.menu-screen.open .menu-nav-item:nth-child(2) .menu-nav-link{transition-delay:.08s;}
+.menu-screen.open .menu-nav-item:nth-child(3) .menu-nav-link{transition-delay:.16s;}
+.menu-screen.open .menu-nav-item:nth-child(4) .menu-nav-link{transition-delay:.24s;}
+.menu-nav-link:hover{color:var(--brass);}
+.menu-nav-link em{font-style:italic;}
+.menu-nav-num{font-family:'Syne',sans-serif;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);align-self:center;}
+.menu-footer{margin-top:auto;padding-top:3rem;display:flex;gap:3rem;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);}
+
+/* COLLECTION HEADER */
+.collection-header{
+  height:100vh; display:flex; align-items:flex-end;
+  padding:3rem 3rem 4rem;
+  position:relative; overflow:hidden;
+  border-bottom:1px solid var(--border);
+}
+.collection-header-bg{
+  position:absolute; inset:0;
+  background:url('images/alireza-dolati-OVS3rqXq9gg-unsplash.jpg') center/cover no-repeat;
+  opacity:.15; transform:scale(1.04);
+  animation:slowzoom 20s ease-in-out infinite alternate;
+}
+@keyframes slowzoom{from{transform:scale(1.04);}to{transform:scale(1.1);}}
+.collection-header-gradient{
+  position:absolute; inset:0;
+  background:linear-gradient(135deg, var(--void) 40%, transparent 100%);
+}
+.collection-header-content{ position:relative; z-index:2; }
+.collection-num{
+  font-family:'Bodoni Moda',serif;
+  font-size:clamp(14rem,28vw,32rem);
+  font-weight:300; line-height:.85;
+  letter-spacing:-.02em;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(240,237,230,.12);
+  position:absolute; right:-2rem; top:50%; transform:translateY(-50%);
+  pointer-events:none; user-select:none;
+}
+.collection-eyebrow{
+  font-size:.6rem; letter-spacing:.45em; text-transform:uppercase;
+  color:var(--brass); margin-bottom:1.5rem;
+}
+.collection-title{
+  font-family:'Bodoni Moda',serif; font-size:clamp(3rem,7vw,7rem);
+  font-weight:300; line-height:.9; letter-spacing:.02em;
+  margin-bottom:1.5rem;
+}
+.collection-title em{font-style:italic;}
+.collection-subtitle{
+  font-size:.75rem; letter-spacing:.25em; text-transform:uppercase;
+  color:var(--dim); max-width:400px; line-height:1.7;
+}
+
+/* FILTER BAR */
+.filter-bar{
+  display:flex; gap:2rem; padding:1.5rem 3rem;
+  border-bottom:1px solid var(--border);
+  background:var(--deep); overflow-x:auto;
+}
+.filter-btn{
+  flex-shrink:0; background:none; border:none; color:var(--dim);
+  font-family:'Syne',sans-serif; font-size:.6rem; letter-spacing:.25em;
+  text-transform:uppercase; cursor:none; padding:.5rem 0;
+  transition:color .2s; border-bottom:1px solid transparent;
+}
+.filter-btn.active,.filter-btn:hover{color:var(--cream);border-bottom-color:var(--brass);}
+
+/* COLLECTION GRID */
+.collection-grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:1px;
+  background:rgba(240,237,230,.04);
+  padding:1px;
+}
+/* Varied column spans for each item */
+.grid-item{ position:relative; overflow:hidden; background:var(--void); }
+.grid-item:nth-child(1){ grid-column:span 5; }
+.grid-item:nth-child(2){ grid-column:span 7; }
+.grid-item:nth-child(3){ grid-column:span 7; }
+.grid-item:nth-child(4){ grid-column:span 5; }
+.grid-item:nth-child(5){ grid-column:span 4; }
+.grid-item:nth-child(6){ grid-column:span 8; }
+
+@media(max-width:900px){
+  .grid-item:nth-child(n){ grid-column:span 6; }
+}
+@media(max-width:560px){
+  .grid-item:nth-child(n){ grid-column:span 12; }
+}
+
+.grid-item-inner{
+  position:relative; aspect-ratio:3/4; overflow:hidden;
+  cursor:none;
+}
+.grid-item:nth-child(2) .grid-item-inner,
+.grid-item:nth-child(6) .grid-item-inner{ aspect-ratio:4/3; }
+
+.grid-item-inner img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  transition:transform .9s cubic-bezier(.25,.46,.45,.94), filter .7s ease;
+  filter:grayscale(20%);
+}
+.grid-item:hover .grid-item-inner img{
+  transform:scale(1.07); filter:grayscale(0%);
+}
+
+/* Overlay */
+.grid-overlay{
+  position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(8,8,10,.9) 0%, transparent 55%);
+  padding:1.5rem; display:flex; flex-direction:column; justify-content:flex-end;
+  opacity:0; transition:opacity .4s ease;
+}
+.grid-item:hover .grid-overlay{ opacity:1; }
+.overlay-series{ font-size:.55rem; letter-spacing:.3em; text-transform:uppercase; color:var(--brass); margin-bottom:.3rem; }
+.overlay-name{ font-family:'Bodoni Moda',serif; font-size:1.2rem; font-weight:400; margin-bottom:.2rem; }
+.overlay-price{ font-size:.7rem; color:rgba(240,237,230,.6); margin-bottom:1rem; }
+.overlay-link{
+  display:inline-flex; align-items:center; gap:.6rem;
+  text-decoration:none; color:var(--cream);
+  font-size:.55rem; letter-spacing:.2em; text-transform:uppercase;
+  border-bottom:1px solid rgba(240,237,230,.4); padding-bottom:2px;
+  align-self:flex-start;
+}
+
+/* Big number watermark per item */
+.grid-num{
+  position:absolute; top:.5rem; left:.5rem;
+  font-family:'Bodoni Moda',serif; font-size:clamp(3rem,6vw,6rem);
+  font-weight:300; color:rgba(240,237,230,.06); line-height:1;
+  pointer-events:none; user-select:none; z-index:2;
+}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:2.5rem 3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+.footer-logo{font-family:'Bodoni Moda',serif;font-size:1rem;letter-spacing:.4em;}
+.footer-links{display:flex;gap:2.5rem;}
+.footer-links a{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;color:var(--dim);transition:color .2s;}
+.footer-links a:hover{color:var(--cream);}
+.footer-copy{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);}
+
+@media(max-width:700px){
+  .collection-header{padding:2rem 1.5rem 3rem;}
+  .filter-bar{padding:1rem 1.5rem;gap:1.5rem;}
+  footer{flex-direction:column;align-items:flex-start;padding:2rem 1.5rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" id="cursor"></div>
+
+<!-- MENU -->
+<div class="menu-screen" id="menuScreen">
+  <ul class="menu-nav-list">
+    <li class="menu-nav-item"><a class="menu-nav-link" href="index.html"><em>Home</em><span class="menu-nav-num">00</span></a></li>
+    <li class="menu-nav-item"><a class="menu-nav-link" href="collection.html"><em>Collection</em><span class="menu-nav-num">01</span></a></li>
+    <li class="menu-nav-item"><a class="menu-nav-link" href="product.html"><em>Product</em><span class="menu-nav-num">02</span></a></li>
+    <li class="menu-nav-item"><a class="menu-nav-link" href="system.html"><em>System</em><span class="menu-nav-num">03</span></a></li>
+  </ul>
+  <div class="menu-footer"><span>Lagos, NG</span><span>Collection I — 2026</span></div>
+</div>
+
+<nav>
+  <a class="nav-logo" href="index.html">KORE</a>
+  <button class="nav-menu-btn" id="menuBtn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HEADER -->
+<section class="collection-header">
+  <div class="collection-header-bg"></div>
+  <div class="collection-header-gradient"></div>
+  <div class="collection-num" aria-hidden="true">I</div>
+  <div class="collection-header-content">
+    <p class="collection-eyebrow">Collection I — 2026</p>
+    <h1 class="collection-title">Forme<br><em>& Structure</em></h1>
+    <p class="collection-subtitle">Six pieces. One wardrobe logic. Limited to available inventory.</p>
+  </div>
+</section>
+
+<!-- FILTER -->
+<div class="filter-bar">
+  <button class="filter-btn active">All Pieces</button>
+  <button class="filter-btn">Forme</button>
+  <button class="filter-btn">Essential</button>
+  <button class="filter-btn">Layer</button>
+  <button class="filter-btn">Aurel</button>
+  <button class="filter-btn">Set</button>
+</div>
+
+<!-- GRID -->
+<div class="collection-grid">
+
+  <article class="grid-item">
+    <div class="grid-num" aria-hidden="true">01</div>
+    <div class="grid-item-inner">
+      <img src="images/Forme 1.png" alt="Cotton Shirt / I" loading="lazy">
+      <div class="grid-overlay">
+        <p class="overlay-series">Forme</p>
+        <h2 class="overlay-name">Cotton Shirt / I</h2>
+        <p class="overlay-price">₦270,000</p>
+        <a class="overlay-link" href="product.html">View Piece →</a>
+      </div>
+    </div>
+  </article>
+
+  <article class="grid-item">
+    <div class="grid-num" aria-hidden="true">02</div>
+    <div class="grid-item-inner">
+      <img src="images/Forme 2.png" alt="Cotton Shirt / II" loading="lazy">
+      <div class="grid-overlay">
+        <p class="overlay-series">Forme</p>
+        <h2 class="overlay-name">Cotton Shirt / II</h2>
+        <p class="overlay-price">₦270,000</p>
+        <a class="overlay-link" href="product.html">View Piece →</a>
+      </div>
+    </div>
+  </article>
+
+  <article class="grid-item">
+    <div class="grid-num" aria-hidden="true">03</div>
+    <div class="grid-item-inner">
+      <img src="images/Essential.jpg" alt="Essential Shirt / I" loading="lazy">
+      <div class="grid-overlay">
+        <p class="overlay-series">Essential</p>
+        <h2 class="overlay-name">Essential Shirt / I</h2>
+        <p class="overlay-price">₦270,000</p>
+        <a class="overlay-link" href="product.html">View Piece →</a>
+      </div>
+    </div>
+  </article>
+
+  <article class="grid-item">
+    <div class="grid-num" aria-hidden="true">04</div>
+    <div class="grid-item-inner">
+      <img src="images/Layer.jpg" alt="Cotton Layer / I" loading="lazy">
+      <div class="grid-overlay">
+        <p class="overlay-series">Layer</p>
+        <h2 class="overlay-name">Cotton Layer / I</h2>
+        <p class="overlay-price">₦270,000</p>
+        <a class="overlay-link" href="product.html">View Piece →</a>
+      </div>
+    </div>
+  </article>
+
+  <article class="grid-item">
+    <div class="grid-num" aria-hidden="true">05</div>
+    <div class="grid-item-inner">
+      <img src="images/Aurel.jpg" alt="Aurel Jacket / I" loading="lazy">
+      <div class="grid-overlay">
+        <p class="overlay-series">Aurel</p>
+        <h2 class="overlay-name">Aurel Jacket / I</h2>
+        <p class="overlay-price">₦270,000</p>
+        <a class="overlay-link" href="product.html">View Piece →</a>
+      </div>
+    </div>
+  </article>
+
+  <article class="grid-item">
+    <div class="grid-num" aria-hidden="true">06</div>
+    <div class="grid-item-inner">
+      <img src="images/Set.jpg" alt="Complete Set / I" loading="lazy">
+      <div class="grid-overlay">
+        <p class="overlay-series">Set</p>
+        <h2 class="overlay-name">Complete Set / I</h2>
+        <p class="overlay-price">₦270,000</p>
+        <a class="overlay-link" href="product.html">View Piece →</a>
+      </div>
+    </div>
+  </article>
+
+</div>
+
+<footer>
+  <a class="footer-logo" href="index.html">KORE</a>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="system.html">System</a>
+    <a href="product.html">Product</a>
+  </div>
+  <p class="footer-copy">© 2026 KORE — Collection I</p>
+</footer>
+
+<script>
+const cursor = document.getElementById('cursor');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function anim(){cx+=(mx-cx)*.15;cy+=(my-cy)*.15;cursor.style.transform=`translate(${cx-6}px,${cy-6}px)`;requestAnimationFrame(anim);})();
+document.querySelectorAll('a,button,.grid-item').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cursor.classList.add('expanded'));
+  el.addEventListener('mouseleave',()=>cursor.classList.remove('expanded'));
+});
+
+const menuBtn=document.getElementById('menuBtn');
+const menuScreen=document.getElementById('menuScreen');
+let open=false;
+menuBtn.addEventListener('click',()=>{
+  open=!open;menuBtn.classList.toggle('active',open);menuScreen.classList.toggle('open',open);
+  document.body.style.overflow=open?'hidden':'';
+});
+menuScreen.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  open=false;menuBtn.classList.remove('active');menuScreen.classList.remove('open');
+  document.body.style.overflow='';
+}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open){open=false;menuBtn.classList.remove('active');menuScreen.classList.remove('open');document.body.style.overflow='';}});
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
